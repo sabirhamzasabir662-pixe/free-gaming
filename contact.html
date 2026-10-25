@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Contact Khan Group of Companies (KGC) – Get in touch regarding FreeGaming.">
+  <meta name="author" content="Hinzy">
+  <meta name="robots" content="index, follow">
+
+  <title>Contact Us – FreeGaming | Khan Group of Companies</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="assets/images/logo.svg" type="image/svg+xml">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ======== NAVBAR ======== -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo" aria-label="Free Gaming Home">
+        <img src="assets/images/logo.svg" alt="Free Gaming logo" width="36" height="36">
+        <span class="logo-text">FreeGaming</span>
+      </a>
+
+      <div class="nav-links" id="navLinks">
+        <a href="index.html">Home</a>
+        <a href="index.html#games-section">Games</a>
+        <a href="index.html#categories">Categories</a>
+      </div>
+
+      <div class="search-wrapper">
+        <span class="search-icon">🔍</span>
+        <input
+          type="search"
+          class="search-bar"
+          id="searchBar"
+          placeholder="Search games..."
+          aria-label="Search games"
+          autocomplete="off"
+        >
+      </div>
+
+      <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    </div>
+  </nav>
+
+  <!-- ======== MAIN CONTENT ======== -->
+  <main class="content-page-wrapper">
+    <a href="index.html" class="game-back-link">← Back to Portal</a>
+
+    <article class="content-card">
+      <span class="page-subtitle">Get in Touch</span>
+      <h1>Contact Us</h1>
+      <p style="color: var(--text-secondary); margin-bottom: 24px;">
+        Have feedback, game submissions, or business inquiries? The Khan Group of Companies (KGC) team is here to assist you.
+      </p>
+
+      <div class="contact-grid">
+        <!-- Contact Info -->
+        <div class="contact-info-card">
+          <h2 style="font-size: 18px; color: var(--text-primary); margin-bottom: 6px;">Company Information</h2>
+          <p style="font-size: 13px; color: #a78bfa; font-weight: 700; margin-bottom: 18px; text-transform: uppercase; letter-spacing: 0.5px;">Owner: Hinzy</p>
+
+          <div class="contact-info-item">
+            <span class="icon">👑</span>
+            <div>
+              <strong>Owner</strong>
+              <span>Hinzy</span>
+            </div>
+          </div>
+
+          <div class="contact-info-item">
+            <span class="icon">🏢</span>
+            <div>
+              <strong>Organization</strong>
+              <span>Khan Group of Companies (KGC)</span>
+            </div>
+          </div>
+
+          <div class="contact-info-item">
+            <span class="icon">✉️</span>
+            <div>
+              <strong>Email Inquiries</strong>
+              <a href="mailto:info@kgc.example">info@kgc.example</a>
+            </div>
+          </div>
+
+          <div class="contact-info-item">
+            <span class="icon">🎮</span>
+            <div>
+              <strong>Platform</strong>
+              <span>FreeGaming Browser Portal</span>
+            </div>
+          </div>
+
+          <div class="contact-info-item">
+            <span class="icon">⏱️</span>
+            <div>
+              <strong>Response Time</strong>
+              <span>Typically within 24–48 business hours</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="contact-form-card">
+          <h2 style="font-size: 18px; color: var(--text-primary); margin-bottom: 18px;">Send a Message</h2>
+
+          <form id="contactForm" onsubmit="event.preventDefault(); document.getElementById('contactSuccess').style.display='block'; this.reset();">
+            <div class="form-group">
+              <label for="contactName">Your Name</label>
+              <input type="text" id="contactName" class="form-input" placeholder="e.g. Alex Hunter" required>
+            </div>
+
+            <div class="form-group">
+              <label for="contactEmail">Your Email</label>
+              <input type="email" id="contactEmail" class="form-input" placeholder="e.g. alex@example.com" required>
+            </div>
+
+            <div class="form-group">
+              <label for="contactSubject">Subject</label>
+              <input type="text" id="contactSubject" class="form-input" placeholder="Game feedback / Business inquiry" required>
+            </div>
+
+            <div class="form-group">
+              <label for="contactMessage">Message</label>
+              <textarea id="contactMessage" class="form-textarea" placeholder="Tell us how we can help..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit">Send Message →</button>
+
+            <div id="contactSuccess" class="form-success-message">
+              ✓ Thank you! Your message has been sent to Khan Group of Companies (KGC). We will get back to you shortly.
+            </div>
+          </form>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <!-- ======== FOOTER ======== -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo">
+          <img src="assets/images/logo.svg" alt="Free Gaming logo" width="36" height="36">
+          <span class="logo-text">FreeGaming</span>
+        </a>
+        <p>Your destination for free, no-download browser games.<br>A KGC (Khan Group of Companies) platform.</p>
+        <div class="kgc-badge">
+          <img src="assets/images/kgc-logo.png" alt="Khan Group of Companies (KGC)" height="36" style="border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.4);">
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Browse</h4>
+        <a href="index.html?category=All#games-section">All Games</a>
+        <a href="index.html#categories">Categories</a>
+        <a href="index.html?sort=toprated#games-section">Top Rated</a>
+        <a href="index.html?sort=newest#games-section">Newest</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Categories</h4>
+        <a href="index.html?category=Action#games-section">Action</a>
+        <a href="index.html?category=Arcade#games-section">Arcade</a>
+        <a href="index.html?category=Puzzle#games-section">Puzzle</a>
+        <a href="index.html?category=Strategy#games-section">Strategy</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>About</h4>
+        <a href="about.html">About Us</a>
+        <a href="contact.html" style="color: var(--text-primary); font-weight: 600;">Contact</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Use</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© 2026 Khan Group of Companies (KGC). Owner: Hinzy. All rights reserved.</span>
+      <span>Powered by KGC</span>
+    </div>
+  </footer>
+
+  <!-- Main Script -->
+  <script src="js/main.js"></script>
+</body>
+</html>

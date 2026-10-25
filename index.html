@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Free Gaming – Play free browser games online. Snake, Tic-Tac-Toe, Clicker, Pong, and more. No downloads, no sign-ups.">
+  <meta name="keywords" content="free games, browser games, online games, snake, tic-tac-toe, clicker, arcade, puzzle">
+  <meta name="author" content="Hinzy">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Free Gaming – Play Free Browser Games Online">
+  <meta property="og:description" content="Browse and play free browser games instantly. No downloads required.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/images/logo.svg">
+
+  <title>Free Gaming – Play Free Browser Games Online</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="assets/images/logo.svg" type="image/svg+xml">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ======== NAVBAR ======== -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo" aria-label="Free Gaming Home">
+        <img src="assets/images/logo.svg" alt="Free Gaming logo" width="36" height="36">
+        <span class="logo-text">FreeGaming</span>
+      </a>
+
+      <div class="nav-links" id="navLinks">
+        <a href="index.html" class="active">Home</a>
+        <a href="#games-section">Games</a>
+        <a href="#categories">Categories</a>
+      </div>
+
+      <div class="search-wrapper">
+        <span class="search-icon">🔍</span>
+        <input
+          type="search"
+          class="search-bar"
+          id="searchBar"
+          placeholder="Search games..."
+          aria-label="Search games"
+          autocomplete="off"
+        >
+      </div>
+
+      <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    </div>
+  </nav>
+
+  <!-- ======== HERO ======== -->
+  <section class="hero">
+    <h1>
+      Play <span class="gradient-text">Free Browser Games</span><br>
+      Instantly. No Downloads.
+    </h1>
+    <p>
+      Dive into a curated collection of cyber-themed games – from arcade classics to
+      mind-bending puzzles. All free, all in your browser.
+    </p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="num">9+</span>
+        <span class="label">Games</span>
+      </div>
+      <div class="hero-stat">
+        <span class="num">100%</span>
+        <span class="label">Free</span>
+      </div>
+      <div class="hero-stat">
+        <span class="num">0</span>
+        <span class="label">Downloads</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== FILTER TOOLBAR ======== -->
+  <div class="toolbar" id="categories">
+    <div class="filter-chips" id="filterChips">
+      <!-- Populated by JS -->
+    </div>
+    <select class="sort-select" id="sortSelect" aria-label="Sort games">
+      <option value="newest">Newest First</option>
+      <option value="toprated">Top Rated</option>
+    </select>
+  </div>
+
+  <!-- ======== SECTION HEADER ======== -->
+  <div class="section-header" id="games-section">
+    <h2>All Games</h2>
+    <a href="#games-section" class="see-all">See all →</a>
+  </div>
+
+  <!-- ======== GAMES GRID ======== -->
+  <div class="games-grid" id="gamesGrid" role="list" aria-label="Games list">
+    <!-- Cards injected by JS -->
+  </div>
+
+  <!-- ======== FOOTER ======== -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo">
+          <img src="assets/images/logo.svg" alt="Free Gaming logo" width="36" height="36">
+          <span class="logo-text">FreeGaming</span>
+        </a>
+        <p>Your destination for free, no-download browser games.<br>A KGC (Khan Group of Companies) platform.</p>
+        <div class="kgc-badge">
+          <img src="assets/images/kgc-logo.png" alt="Khan Group of Companies (KGC)" height="36" style="border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.4);">
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Browse</h4>
+        <a href="index.html?category=All#games-section">All Games</a>
+        <a href="index.html#categories">Categories</a>
+        <a href="index.html?sort=toprated#games-section">Top Rated</a>
+        <a href="index.html?sort=newest#games-section">Newest</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Categories</h4>
+        <a href="index.html?category=Action#games-section">Action</a>
+        <a href="index.html?category=Arcade#games-section">Arcade</a>
+        <a href="index.html?category=Puzzle#games-section">Puzzle</a>
+        <a href="index.html?category=Strategy#games-section">Strategy</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>About</h4>
+        <a href="about.html">About Us</a>
+        <a href="contact.html">Contact</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Use</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© 2026 Khan Group of Companies (KGC). Owner: Hinzy. All rights reserved.</span>
+      <span>Powered by KGC</span>
+    </div>
+  </footer>
+
+  <!-- Main Script -->
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cyber Mine Decryptor</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+    body {
+      background: #0c0410;
+      color: #f1f5f9;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 12px;
+    }
+    .wrapper {
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .hud {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #1c0a1e;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      border-radius: 12px;
+      padding: 8px 16px;
+    }
+    .stat { display: flex; flex-direction: column; }
+    .stat-label { font-size: 10px; color: #fca5a5; text-transform: uppercase; letter-spacing: 1px; }
+    .stat-val { font-size: 18px; font-weight: 700; color: #ef4444; font-family: monospace; }
+    .board-container {
+      border: 2px solid rgba(239, 68, 68, 0.4);
+      border-radius: 12px;
+      box-shadow: 0 0 25px rgba(239, 68, 68, 0.15);
+      background: #0f0812;
+      padding: 8px;
+      overflow: hidden;
+    }
+    .board {
+      display: grid;
+      gap: 3px;
+    }
+    .cell {
+      width: 38px;
+      height: 38px;
+      background: #1a0e24;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 15px;
+      font-family: monospace;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, transform 0.1s;
+    }
+    .cell:hover:not(.revealed):not(.flagged) {
+      border-color: #ef4444;
+      background: #2a1236;
+      transform: scale(1.05);
+    }
+    .cell.revealed {
+      background: #0a0510;
+      border-color: rgba(239, 68, 68, 0.1);
+      cursor: default;
+    }
+    .cell.flagged {
+      background: #2a0a16;
+      border-color: #f97316;
+      box-shadow: 0 0 8px rgba(249, 115, 22, 0.3);
+    }
+    .cell.mine-hit {
+      background: #7f1d1d;
+      border-color: #ef4444;
+      box-shadow: 0 0 14px rgba(239, 68, 68, 0.6);
+    }
+    .cell.mine-shown {
+      background: #1f0814;
+      border-color: #ef4444;
+    }
+    .c1 { color: #38bdf8; }
+    .c2 { color: #22c55e; }
+    .c3 { color: #ef4444; }
+    .c4 { color: #8b5cf6; }
+    .c5 { color: #f97316; }
+    .c6 { color: #06b6d4; }
+    .c7 { color: #ec4899; }
+    .c8 { color: #94a3b8; }
+    .controls {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+    }
+    .ctrl-btn {
+      flex: 1;
+      padding: 10px;
+      background: #1c0a1e;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+      font-weight: 700;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 13px;
+      text-align: center;
+      transition: background 0.15s;
+    }
+    .ctrl-btn:hover { background: #2e0f30; }
+    .ctrl-btn.active { background: #7f1d1d; border-color: #ef4444; color: #fff; }
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(12, 4, 16, 0.92);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      z-index: 10;
+      backdrop-filter: blur(4px);
+    }
+    .hidden { display: none !important; }
+    h2 { font-size: 22px; text-align: center; }
+    p { font-size: 13px; color: #94a3b8; text-align: center; max-width: 260px; line-height: 1.4; }
+    .btn {
+      background: linear-gradient(135deg, #dc2626, #ef4444);
+      color: #fff;
+      border: none;
+      padding: 10px 24px;
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+    }
+    .btn:hover { transform: scale(1.05); }
+    .difficulty-row {
+      display: flex;
+      gap: 8px;
+    }
+    .diff-btn {
+      padding: 8px 16px;
+      background: #1c0a1e;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .diff-btn.selected { background: #7f1d1d; border-color: #ef4444; color: #fff; }
+  </style>
+</head>
+<body>
+  <div id="startOverlay" class="overlay">
+    <h2 style="color: #f87171; text-shadow: 0 0 12px #ef4444;">CYBER MINES</h2>
+    <p>Infiltrate encrypted sectors. Left-click to inspect, right-click to flag suspicious nodes.</p>
+    <div class="difficulty-row">
+      <button class="diff-btn selected" data-diff="easy">Easy 8×8</button>
+      <button class="diff-btn" data-diff="medium">Medium 10×10</button>
+      <button class="diff-btn" data-diff="hard">Hard 12×12</button>
+    </div>
+    <button class="btn" id="startBtn">DECRYPT FIELD</button>
+  </div>
+
+  <div id="resultOverlay" class="overlay hidden">
+    <h2 id="resultTitle">—</h2>
+    <p id="resultMsg">—</p>
+    <button class="btn" id="playAgainBtn">PLAY AGAIN</button>
+  </div>
+
+  <div class="wrapper">
+    <div class="hud">
+      <div class="stat">
+        <span class="stat-label">Mines</span>
+        <span class="stat-val" id="mineCountEl">10</span>
+      </div>
+      <div class="stat" style="align-items: center;">
+        <span class="stat-label">Status</span>
+        <span class="stat-val" id="statusEl" style="font-size: 14px;">SCANNING</span>
+      </div>
+      <div class="stat" style="align-items: flex-end;">
+        <span class="stat-label">Time</span>
+        <span class="stat-val" id="timerEl">0s</span>
+      </div>
+    </div>
+
+    <div class="board-container">
+      <div class="board" id="board"></div>
+    </div>
+
+    <div class="controls">
+      <button class="ctrl-btn" id="flagToggle">🚩 FLAG MODE</button>
+      <button class="ctrl-btn" id="newGameBtn">🔄 NEW GAME</button>
+    </div>
+  </div>
+
+  <script>
+    const boardEl = document.getElementById('board');
+    const mineCountEl = document.getElementById('mineCountEl');
+    const timerEl = document.getElementById('timerEl');
+    const statusEl = document.getElementById('statusEl');
+    const startOverlay = document.getElementById('startOverlay');
+    const resultOverlay = document.getElementById('resultOverlay');
+    const resultTitle = document.getElementById('resultTitle');
+    const resultMsg = document.getElementById('resultMsg');
+    const flagToggle = document.getElementById('flagToggle');
+
+    const DIFFICULTIES = {
+      easy:   { rows: 8,  cols: 8,  mines: 10 },
+      medium: { rows: 10, cols: 10, mines: 18 },
+      hard:   { rows: 12, cols: 12, mines: 30 }
+    };
+
+    let difficulty = 'easy';
+    let rows, cols, totalMines;
+    let grid = [];
+    let revealed = [];
+    let flagged = [];
+    let mineLocations = [];
+    let gameOver = false;
+    let firstClick = true;
+    let flagMode = false;
+    let flagsPlaced = 0;
+    let timer = 0;
+    let timerInterval = null;
+    let cellsRevealed = 0;
+
+    // Difficulty selection
+    document.querySelectorAll('.diff-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        difficulty = btn.dataset.diff;
+      });
+    });
+
+    flagToggle.addEventListener('click', () => {
+      flagMode = !flagMode;
+      flagToggle.classList.toggle('active', flagMode);
+    });
+
+    document.getElementById('startBtn').addEventListener('click', () => {
+      startOverlay.classList.add('hidden');
+      initGame();
+    });
+    document.getElementById('playAgainBtn').addEventListener('click', () => {
+      resultOverlay.classList.add('hidden');
+      initGame();
+    });
+    document.getElementById('newGameBtn').addEventListener('click', () => {
+      clearInterval(timerInterval);
+      initGame();
+    });
+
+    function initGame() {
+      const d = DIFFICULTIES[difficulty];
+      rows = d.rows; cols = d.cols; totalMines = d.mines;
+
+      grid = Array.from({ length: rows }, () => Array(cols).fill(0));
+      revealed = Array.from({ length: rows }, () => Array(cols).fill(false));
+      flagged = Array.from({ length: rows }, () => Array(cols).fill(false));
+      mineLocations = [];
+      gameOver = false;
+      firstClick = true;
+      flagsPlaced = 0;
+      cellsRevealed = 0;
+      timer = 0;
+      clearInterval(timerInterval);
+      timerEl.textContent = '0s';
+      statusEl.textContent = 'SCANNING';
+      statusEl.style.color = '#ef4444';
+      mineCountEl.textContent = totalMines;
+      flagMode = false;
+      flagToggle.classList.remove('active');
+
+      const cellSize = Math.min(38, Math.floor((380 - (cols - 1) * 3) / cols));
+      boardEl.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
+      boardEl.innerHTML = '';
+
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const cell = document.createElement('div');
+          cell.className = 'cell';
+          cell.style.width = cellSize + 'px';
+          cell.style.height = cellSize + 'px';
+          cell.dataset.r = r;
+          cell.dataset.c = c;
+
+          cell.addEventListener('click', (e) => handleClick(r, c, false));
+          cell.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            handleClick(r, c, true);
+          });
+
+          boardEl.appendChild(cell);
+        }
+      }
+    }
+
+    function placeMines(safeR, safeC) {
+      let placed = 0;
+      while (placed < totalMines) {
+        const r = Math.floor(Math.random() * rows);
+        const c = Math.floor(Math.random() * cols);
+        if (grid[r][c] === -1) continue;
+        if (Math.abs(r - safeR) <= 1 && Math.abs(c - safeC) <= 1) continue;
+        grid[r][c] = -1;
+        mineLocations.push([r, c]);
+        placed++;
+      }
+
+      // Calculate numbers
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          if (grid[r][c] === -1) continue;
+          let count = 0;
+          for (let dr = -1; dr <= 1; dr++) {
+            for (let dc = -1; dc <= 1; dc++) {
+              const nr = r + dr, nc = c + dc;
+              if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && grid[nr][nc] === -1) count++;
+            }
+          }
+          grid[r][c] = count;
+        }
+      }
+    }
+
+    function handleClick(r, c, isRightClick) {
+      if (gameOver) return;
+
+      const doFlag = isRightClick || flagMode;
+
+      if (doFlag) {
+        if (revealed[r][c]) return;
+        flagged[r][c] = !flagged[r][c];
+        flagsPlaced += flagged[r][c] ? 1 : -1;
+        mineCountEl.textContent = totalMines - flagsPlaced;
+        const cell = getCell(r, c);
+        cell.classList.toggle('flagged', flagged[r][c]);
+        cell.textContent = flagged[r][c] ? '🚩' : '';
+        return;
+      }
+
+      if (flagged[r][c] || revealed[r][c]) return;
+
+      if (firstClick) {
+        firstClick = false;
+        placeMines(r, c);
+        timerInterval = setInterval(() => {
+          timer++;
+          timerEl.textContent = timer + 's';
+        }, 1000);
+      }
+
+      if (grid[r][c] === -1) {
+        // Hit a mine
+        gameOver = true;
+        clearInterval(timerInterval);
+        statusEl.textContent = 'BREACHED!';
+        getCell(r, c).classList.add('mine-hit');
+        revealAllMines();
+        setTimeout(() => {
+          resultTitle.style.color = '#f87171';
+          resultTitle.style.textShadow = '0 0 12px #ef4444';
+          resultTitle.textContent = 'SYSTEM BREACHED!';
+          resultMsg.textContent = `Mine detonated at sector [${r},${c}] after ${timer}s.`;
+          resultOverlay.classList.remove('hidden');
+        }, 600);
+        return;
+      }
+
+      revealCell(r, c);
+      checkWin();
+    }
+
+    function revealCell(r, c) {
+      if (r < 0 || r >= rows || c < 0 || c >= cols) return;
+      if (revealed[r][c] || flagged[r][c]) return;
+
+      revealed[r][c] = true;
+      cellsRevealed++;
+      const cell = getCell(r, c);
+      cell.classList.add('revealed');
+
+      if (grid[r][c] > 0) {
+        cell.textContent = grid[r][c];
+        cell.classList.add('c' + grid[r][c]);
+      } else if (grid[r][c] === 0) {
+        // Flood fill
+        for (let dr = -1; dr <= 1; dr++) {
+          for (let dc = -1; dc <= 1; dc++) {
+            revealCell(r + dr, c + dc);
+          }
+        }
+      }
+    }
+
+    function revealAllMines() {
+      mineLocations.forEach(([r, c]) => {
+        const cell = getCell(r, c);
+        if (!cell.classList.contains('mine-hit')) {
+          cell.classList.add('mine-shown');
+          cell.textContent = '💣';
+        } else {
+          cell.textContent = '💥';
+        }
+      });
+    }
+
+    function checkWin() {
+      const totalSafe = rows * cols - totalMines;
+      if (cellsRevealed >= totalSafe) {
+        gameOver = true;
+        clearInterval(timerInterval);
+        statusEl.textContent = 'DECRYPTED!';
+        statusEl.style.color = '#22c55e';
+        setTimeout(() => {
+          resultTitle.style.color = '#34d399';
+          resultTitle.style.textShadow = '0 0 12px #22c55e';
+          resultTitle.textContent = 'FIELD DECRYPTED!';
+          resultMsg.textContent = `All sectors cleared in ${timer}s. Mission success!`;
+          resultOverlay.classList.remove('hidden');
+        }, 300);
+      }
+    }
+
+    function getCell(r, c) {
+      return boardEl.children[r * cols + c];
+    }
+
+    initGame();
+  </script>
+</body>
+</html>

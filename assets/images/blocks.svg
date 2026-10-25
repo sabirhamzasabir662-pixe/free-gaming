@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg-blocks" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a121d" />
+      <stop offset="100%" stop-color="#03060a" />
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" fill="url(#bg-blocks)" />
+  <!-- Grid Matrix -->
+  <g opacity="0.08" stroke="#38bdf8" stroke-width="1">
+    <pattern id="bgrid" width="30" height="30" patternUnits="userSpaceOnUse">
+      <path d="M 30 0 L 0 0 0 30" fill="none" />
+    </pattern>
+  </g>
+  <rect width="640" height="360" fill="url(#bgrid)" opacity="0.1" />
+
+  <!-- Falling Neon Blocks / Tetromino style -->
+  <!-- T block - Purple -->
+  <g transform="translate(180, 100)" filter="drop-shadow(0 0 8px #a855f7)">
+    <rect x="0" y="32" width="30" height="30" rx="4" fill="#a855f7" stroke="#d8b4fe" stroke-width="1.5"/>
+    <rect x="32" y="32" width="30" height="30" rx="4" fill="#a855f7" stroke="#d8b4fe" stroke-width="1.5"/>
+    <rect x="64" y="32" width="30" height="30" rx="4" fill="#a855f7" stroke="#d8b4fe" stroke-width="1.5"/>
+    <rect x="32" y="0" width="30" height="30" rx="4" fill="#a855f7" stroke="#d8b4fe" stroke-width="1.5"/>
+  </g>
+  <!-- L block - Orange -->
+  <g transform="translate(320, 150)" filter="drop-shadow(0 0 8px #f97316)">
+    <rect x="0" y="0" width="30" height="30" rx="4" fill="#f97316" stroke="#fed7aa" stroke-width="1.5"/>
+    <rect x="0" y="32" width="30" height="30" rx="4" fill="#f97316" stroke="#fed7aa" stroke-width="1.5"/>
+    <rect x="0" y="64" width="30" height="30" rx="4" fill="#f97316" stroke="#fed7aa" stroke-width="1.5"/>
+    <rect x="32" y="64" width="30" height="30" rx="4" fill="#f97316" stroke="#fed7aa" stroke-width="1.5"/>
+  </g>
+  <!-- Line block - Cyan -->
+  <g transform="translate(240, 220)" filter="drop-shadow(0 0 8px #06b6d4)">
+    <rect x="0" y="0" width="30" height="30" rx="4" fill="#06b6d4" stroke="#a5f3fc" stroke-width="1.5"/>
+    <rect x="32" y="0" width="30" height="30" rx="4" fill="#06b6d4" stroke="#a5f3fc" stroke-width="1.5"/>
+    <rect x="64" y="0" width="30" height="30" rx="4" fill="#06b6d4" stroke="#a5f3fc" stroke-width="1.5"/>
+    <rect x="96" y="0" width="30" height="30" rx="4" fill="#06b6d4" stroke="#a5f3fc" stroke-width="1.5"/>
+  </g>
+  <!-- Cube block - Yellow -->
+  <g transform="translate(420, 90)" filter="drop-shadow(0 0 8px #eab308)">
+    <rect x="0" y="0" width="30" height="30" rx="4" fill="#eab308" stroke="#fef08a" stroke-width="1.5"/>
+    <rect x="32" y="0" width="30" height="30" rx="4" fill="#eab308" stroke="#fef08a" stroke-width="1.5"/>
+    <rect x="0" y="32" width="30" height="30" rx="4" fill="#eab308" stroke="#fef08a" stroke-width="1.5"/>
+    <rect x="32" y="32" width="30" height="30" rx="4" fill="#eab308" stroke="#fef08a" stroke-width="1.5"/>
+  </g>
+
+  <text x="30" y="45" fill="#06b6d4" font-family="'Courier New', monospace" font-size="13" font-weight="bold" letter-spacing="2">BLOCK_BLAST // TETRA MATRIX</text>
+  <text x="500" y="45" fill="#f97316" font-family="'Courier New', monospace" font-size="12">LINES: 42</text>
+  <path d="M 30 55 L 610 55" stroke="rgba(6, 182, 212, 0.2)" stroke-width="1"/>
+</svg>

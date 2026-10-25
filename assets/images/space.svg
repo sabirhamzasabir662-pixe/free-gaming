@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg-space" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#050814" />
+      <stop offset="50%" stop-color="#02030a" />
+      <stop offset="100%" stop-color="#000000" />
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" fill="url(#bg-space)" />
+  <!-- Stars -->
+  <g fill="#ffffff">
+    <circle cx="80" cy="90" r="1.5" opacity="0.6"/><circle cx="150" cy="220" r="1"/><circle cx="280" cy="80" r="2" opacity="0.8"/>
+    <circle cx="420" cy="120" r="1.5"/><circle cx="560" cy="230" r="1"/><circle cx="500" cy="60" r="2"/>
+    <circle cx="210" cy="290" r="1.5"/><circle cx="340" cy="320" r="1"/><circle cx="90" cy="310" r="2"/>
+  </g>
+  <!-- Cyber Nebula -->
+  <circle cx="380" cy="180" r="120" fill="#3b82f6" opacity="0.15" filter="blur(40px)" />
+  <circle cx="480" cy="140" r="80" fill="#8b5cf6" opacity="0.2" filter="blur(30px)" />
+
+  <!-- Player Spaceship -->
+  <g transform="translate(140, 180) rotate(90) scale(1.4)" filter="drop-shadow(0 0 10px #38bdf8)">
+    <polygon points="0,-24 16,16 0,8 -16,16" fill="#0284c7" stroke="#38bdf8" stroke-width="2" />
+    <polygon points="0,-16 8,10 0,6 -8,10" fill="#e0f2fe" />
+    <!-- Thruster fire -->
+    <polygon points="0,8 6,24 0,32 -6,24" fill="#f59e0b" filter="drop-shadow(0 0 6px #ef4444)" />
+  </g>
+  <!-- Laser Blasts -->
+  <line x1="180" y1="170" x2="250" y2="170" stroke="#38bdf8" stroke-width="4" stroke-linecap="round" filter="drop-shadow(0 0 8px #38bdf8)"/>
+  <line x1="180" y1="190" x2="250" y2="190" stroke="#38bdf8" stroke-width="4" stroke-linecap="round" filter="drop-shadow(0 0 8px #38bdf8)"/>
+
+  <!-- Neon Asteroids / Enemy Ships -->
+  <polygon points="460,110 500,130 480,180 430,160 420,120" fill="#1e1b4b" stroke="#ec4899" stroke-width="2.5" filter="drop-shadow(0 0 10px #ec4899)" />
+  <polygon points="360,240 390,250 380,280 340,270" fill="#1e1b4b" stroke="#f43f5e" stroke-width="2" />
+
+  <!-- HUD -->
+  <text x="30" y="45" fill="#38bdf8" font-family="'Courier New', monospace" font-size="13" font-weight="bold" letter-spacing="2">SPACE_DODGE // GALAXY DEFENDER</text>
+  <text x="500" y="45" fill="#f43f5e" font-family="'Courier New', monospace" font-size="12">SHIELD: 100%</text>
+  <path d="M 30 55 L 610 55" stroke="rgba(56, 189, 248, 0.2)" stroke-width="1"/>
+</svg>

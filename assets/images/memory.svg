@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg-mem" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#140728" />
+      <stop offset="100%" stop-color="#070210" />
+    </linearGradient>
+    <linearGradient id="card-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2a164d" />
+      <stop offset="100%" stop-color="#190a33" />
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" fill="url(#bg-mem)" />
+  <!-- Ambient light -->
+  <circle cx="320" cy="180" r="160" fill="#ec4899" opacity="0.12" filter="blur(30px)"/>
+  
+  <!-- 4 Cards displayed in 3D perspective -->
+  <!-- Card 1 -->
+  <g transform="translate(100, 110)">
+    <rect width="90" height="130" rx="10" fill="url(#card-grad)" stroke="#a855f7" stroke-width="2" filter="drop-shadow(0 6px 12px rgba(0,0,0,0.5))" />
+    <circle cx="45" cy="65" r="22" fill="#ec4899" opacity="0.2" />
+    <text x="45" y="74" fill="#f472b6" font-size="28" text-anchor="middle">★</text>
+  </g>
+  <!-- Card 2 (Flipped/Revealed) -->
+  <g transform="translate(220, 100) scale(1.05)">
+    <rect width="90" height="130" rx="10" fill="#2e1065" stroke="#ec4899" stroke-width="3" filter="drop-shadow(0 0 16px rgba(236, 72, 153, 0.5))" />
+    <circle cx="45" cy="65" r="26" fill="#ec4899" opacity="0.3" />
+    <text x="45" y="75" fill="#fbcfe8" font-size="32" text-anchor="middle">⚡</text>
+  </g>
+  <!-- Card 3 (Matching pair revealed) -->
+  <g transform="translate(350, 100) scale(1.05)">
+    <rect width="90" height="130" rx="10" fill="#2e1065" stroke="#ec4899" stroke-width="3" filter="drop-shadow(0 0 16px rgba(236, 72, 153, 0.5))" />
+    <circle cx="45" cy="65" r="26" fill="#ec4899" opacity="0.3" />
+    <text x="45" y="75" fill="#fbcfe8" font-size="32" text-anchor="middle">⚡</text>
+  </g>
+  <!-- Card 4 (Back pattern) -->
+  <g transform="translate(480, 110)">
+    <rect width="90" height="130" rx="10" fill="url(#card-grad)" stroke="#a855f7" stroke-width="2" filter="drop-shadow(0 6px 12px rgba(0,0,0,0.5))" />
+    <circle cx="45" cy="65" r="22" fill="#a855f7" opacity="0.2" />
+    <text x="45" y="74" fill="#c084fc" font-size="28" text-anchor="middle">?</text>
+  </g>
+
+  <!-- HUD text -->
+  <text x="30" y="45" fill="#ec4899" font-family="'Courier New', monospace" font-size="13" font-weight="bold" letter-spacing="2">CYBER_MEMORY // NEURAL MATCH</text>
+  <text x="510" y="45" fill="#c084fc" font-family="'Courier New', monospace" font-size="12">PAIRS: 8/8</text>
+  <path d="M 30 55 L 610 55" stroke="rgba(236, 72, 153, 0.2)" stroke-width="1"/>
+</svg>

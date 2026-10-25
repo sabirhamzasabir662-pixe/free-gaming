@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Hyper Neon Pong</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+    body {
+      background: #060c14;
+      color: #e2e8f0;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+      padding: 12px;
+    }
+    .wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 540px;
+      gap: 12px;
+    }
+    .hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      background: #0f1c2e;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 12px;
+      padding: 8px 16px;
+    }
+    .score-row {
+      display: flex;
+      gap: 20px;
+      font-size: 24px;
+      font-weight: 800;
+      font-family: monospace;
+    }
+    .p1 { color: #38bdf8; text-shadow: 0 0 10px #38bdf8; }
+    .p2 { color: #f43f5e; text-shadow: 0 0 10px #f43f5e; }
+    .canvas-box {
+      position: relative;
+      border: 2px solid rgba(56, 189, 248, 0.4);
+      border-radius: 14px;
+      box-shadow: 0 0 30px rgba(56, 189, 248, 0.2);
+      background: #04080e;
+      overflow: hidden;
+    }
+    canvas { display: block; }
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(4, 8, 14, 0.9);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+    .overlay.hidden { display: none; }
+    .btn-play {
+      background: linear-gradient(135deg, #38bdf8, #0284c7);
+      color: #04080e;
+      font-weight: 800;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 14px;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+    }
+    .hint { font-size: 12px; color: #94a3b8; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="hud">
+      <div style="font-size:12px; color:#94a3b8; text-transform:uppercase;">YOU vs AI</div>
+      <div class="score-row">
+        <span class="p1" id="scoreP1">0</span>
+        <span style="color:#64748b;">:</span>
+        <span class="p2" id="scoreP2">0</span>
+      </div>
+      <div style="font-size:12px; color:#38bdf8;">FIRST TO 7</div>
+    </div>
+
+    <div class="canvas-box">
+      <canvas id="pongCanvas" width="480" height="320"></canvas>
+      <div class="overlay" id="startOverlay">
+        <h2 style="color:#38bdf8; text-shadow:0 0 15px #38bdf8;">HYPER NEON PONG</h2>
+        <p class="hint">Use Up/Down Arrow keys, W/S, or drag on screen to move paddle.</p>
+        <button class="btn-play" id="btnStart">START MATCH</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('pongCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const paddleW = 10, paddleH = 65;
+    let p1Y = (canvas.height - paddleH) / 2;
+    let p2Y = (canvas.height - paddleH) / 2;
+    let ballX = canvas.width / 2, ballY = canvas.height / 2;
+    let ballSpeedX = 4, ballSpeedY = 2.5;
+    let p1Score = 0, p2Score = 0;
+    let isPlaying = false;
+    let keys = {};
+
+    window.addEventListener('keydown', e => keys[e.key] = true);
+    window.addEventListener('keyup', e => keys[e.key] = false);
+
+    // Touch support
+    canvas.addEventListener('touchmove', e => {
+      e.preventDefault();
+      const rect = canvas.getBoundingClientRect();
+      const touchY = e.touches[0].clientY - rect.top;
+      p1Y = touchY - paddleH / 2;
+    }, { passive: false });
+
+    function resetBall(servingP1 = true) {
+      ballX = canvas.width / 2;
+      ballY = canvas.height / 2;
+      ballSpeedX = (servingP1 ? 4 : -4);
+      ballSpeedY = (Math.random() * 4 - 2);
+    }
+
+    function update() {
+      if (!isPlaying) return;
+
+      // Player 1 controls
+      if (keys['ArrowUp'] || keys['w'] || keys['W']) p1Y -= 6;
+      if (keys['ArrowDown'] || keys['s'] || keys['S']) p1Y += 6;
+      p1Y = Math.max(0, Math.min(canvas.height - paddleH, p1Y));
+
+      // AI controls (smooth tracking)
+      const aiCenter = p2Y + paddleH / 2;
+      if (aiCenter < ballY - 12) p2Y += 4.2;
+      else if (aiCenter > ballY + 12) p2Y -= 4.2;
+      p2Y = Math.max(0, Math.min(canvas.height - paddleH, p2Y));
+
+      // Move ball
+      ballX += ballSpeedX;
+      ballY += ballSpeedY;
+
+      // Wall bounce top/bottom
+      if (ballY <= 6 || ballY >= canvas.height - 6) {
+        ballSpeedY = -ballSpeedY;
+      }
+
+      // Left paddle collision
+      if (ballX <= 26 && ballX >= 16 && ballY >= p1Y && ballY <= p1Y + paddleH) {
+        ballSpeedX = Math.abs(ballSpeedX) * 1.05;
+        const delta = (ballY - (p1Y + paddleH / 2)) / (paddleH / 2);
+        ballSpeedY = delta * 5;
+      }
+
+      // Right paddle collision
+      if (ballX >= canvas.width - 26 && ballX <= canvas.width - 16 && ballY >= p2Y && ballY <= p2Y + paddleH) {
+        ballSpeedX = -Math.abs(ballSpeedX) * 1.05;
+        const delta = (ballY - (p2Y + paddleH / 2)) / (paddleH / 2);
+        ballSpeedY = delta * 5;
+      }
+
+      // Score
+      if (ballX < 0) {
+        p2Score++;
+        document.getElementById('scoreP2').textContent = p2Score;
+        checkWin();
+        resetBall(true);
+      } else if (ballX > canvas.width) {
+        p1Score++;
+        document.getElementById('scoreP1').textContent = p1Score;
+        checkWin();
+        resetBall(false);
+      }
+
+      render();
+      requestAnimationFrame(update);
+    }
+
+    function checkWin() {
+      if (p1Score >= 7 || p2Score >= 7) {
+        isPlaying = false;
+        document.getElementById('startOverlay').classList.remove('hidden');
+        document.getElementById('startOverlay').querySelector('h2').textContent = p1Score >= 7 ? "VICTORY! YOU WON" : "AI DEFEATED YOU";
+        document.getElementById('btnStart').textContent = "PLAY AGAIN";
+      }
+    }
+
+    function render() {
+      ctx.fillStyle = '#04080e';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Center dashed net
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.2)';
+      ctx.setLineDash([8, 8]);
+      ctx.beginPath();
+      ctx.moveTo(canvas.width / 2, 0);
+      ctx.lineTo(canvas.width / 2, canvas.height);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Left Paddle
+      ctx.fillStyle = '#38bdf8';
+      ctx.shadowColor = '#38bdf8';
+      ctx.shadowBlur = 10;
+      ctx.fillRect(16, p1Y, paddleW, paddleH);
+
+      // Right Paddle
+      ctx.fillStyle = '#f43f5e';
+      ctx.shadowColor = '#f43f5e';
+      ctx.shadowBlur = 10;
+      ctx.fillRect(canvas.width - 26, p2Y, paddleW, paddleH);
+
+      // Ball
+      ctx.fillStyle = '#ffffff';
+      ctx.shadowColor = '#38bdf8';
+      ctx.shadowBlur = 14;
+      ctx.beginPath();
+      ctx.arc(ballX, ballY, 7, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+
+    document.getElementById('btnStart').addEventListener('click', () => {
+      document.getElementById('startOverlay').classList.add('hidden');
+      p1Score = 0;
+      p2Score = 0;
+      document.getElementById('scoreP1').textContent = 0;
+      document.getElementById('scoreP2').textContent = 0;
+      resetBall();
+      isPlaying = true;
+      requestAnimationFrame(update);
+    });
+
+    render();
+  </script>
+</body>
+</html>

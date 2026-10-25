@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Space Dodge Odyssey</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+    body {
+      background: #050814;
+      color: #e2e8f0;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+      padding: 12px;
+    }
+    .wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 440px;
+      gap: 12px;
+    }
+    .hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      background: #0d1326;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 12px;
+      padding: 8px 16px;
+    }
+    .stat { display: flex; flex-direction: column; }
+    .stat-label { font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
+    .stat-val { font-size: 18px; font-weight: 700; color: #3b82f6; font-family: monospace; }
+    .canvas-container {
+      position: relative;
+      border: 2px solid rgba(59, 130, 246, 0.4);
+      border-radius: 14px;
+      box-shadow: 0 0 30px rgba(59, 130, 246, 0.2);
+      background: #030611;
+      overflow: hidden;
+    }
+    canvas { display: block; }
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(3, 6, 17, 0.88);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      backdrop-filter: blur(4px);
+    }
+    .hidden { display: none !important; }
+    h2 { font-size: 24px; color: #60a5fa; text-shadow: 0 0 12px #3b82f6; text-align: center; }
+    p { font-size: 13px; color: #94a3b8; text-align: center; max-width: 260px; line-height: 1.4; }
+    .btn {
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      color: #fff;
+      border: none;
+      padding: 10px 24px;
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn:hover { transform: scale(1.05); box-shadow: 0 0 22px rgba(59, 130, 246, 0.8); }
+    .touch-controls {
+      display: flex;
+      width: 100%;
+      gap: 12px;
+      margin-top: 4px;
+    }
+    .touch-btn {
+      flex: 1;
+      padding: 14px;
+      background: #0f172a;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      color: #60a5fa;
+      font-weight: 700;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      text-align: center;
+    }
+    .touch-btn:active { background: #1e293b; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="hud">
+      <div class="stat">
+        <span class="stat-label">Score</span>
+        <span class="stat-val" id="score">0</span>
+      </div>
+      <div class="stat" style="align-items: center;">
+        <span class="stat-label">Shields</span>
+        <span class="stat-val" id="shields" style="color: #38bdf8;">♥♥♥</span>
+      </div>
+      <div class="stat" style="align-items: flex-end;">
+        <span class="stat-label">Best</span>
+        <span class="stat-val" id="bestScore">0</span>
+      </div>
+    </div>
+
+    <div class="canvas-container">
+      <canvas id="gameCanvas" width="400" height="520"></canvas>
+      <div id="startOverlay" class="overlay">
+        <h2>SPACE ODYSSEY</h2>
+        <p>Maneuver your starship through the cosmic asteroid field. Collect energy cores to restore shields!</p>
+        <button class="btn" id="startBtn">LAUNCH SHIP</button>
+      </div>
+      <div id="gameOverOverlay" class="overlay hidden">
+        <h2 style="color: #f87171; text-shadow: 0 0 12px #ef4444;">MISSION TERMINATED</h2>
+        <p>Final Score: <strong id="finalScore" style="color: #60a5fa;">0</strong></p>
+        <button class="btn" id="restartBtn">TRY AGAIN</button>
+      </div>
+    </div>
+
+    <div class="touch-controls">
+      <button class="touch-btn" id="leftBtn">◀ STEER LEFT</button>
+      <button class="touch-btn" id="rightBtn">STEER RIGHT ▶</button>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const scoreEl = document.getElementById('score');
+    const bestScoreEl = document.getElementById('bestScore');
+    const shieldsEl = document.getElementById('shields');
+    const startOverlay = document.getElementById('startOverlay');
+    const gameOverOverlay = document.getElementById('gameOverOverlay');
+    const finalScoreEl = document.getElementById('finalScore');
+    const startBtn = document.getElementById('startBtn');
+    const restartBtn = document.getElementById('restartBtn');
+
+    let animationId;
+    let isPlaying = false;
+    let score = 0;
+    let bestScore = parseInt(localStorage.getItem('space_best') || '0', 10);
+    bestScoreEl.textContent = bestScore;
+    let shields = 3;
+    let keys = { left: false, right: false };
+
+    const ship = {
+      x: 200,
+      y: 460,
+      width: 32,
+      height: 38,
+      speed: 6,
+      tilt: 0
+    };
+
+    let stars = [];
+    let asteroids = [];
+    let powerups = [];
+    let particles = [];
+    let spawnTimer = 0;
+
+    for (let i = 0; i < 60; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 2 + 0.5,
+        speed: Math.random() * 2 + 1,
+        alpha: Math.random() * 0.7 + 0.3
+      });
+    }
+
+    function createExplosion(x, y, color = '#f97316', count = 16) {
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 4 + 1;
+        particles.push({
+          x, y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          radius: Math.random() * 3 + 1,
+          color,
+          alpha: 1,
+          decay: Math.random() * 0.03 + 0.02
+        });
+      }
+    }
+
+    function updateShieldDisplay() {
+      shieldsEl.textContent = '♥'.repeat(Math.max(0, shields));
+    }
+
+    function spawnAsteroid() {
+      const radius = Math.random() * 18 + 12;
+      asteroids.push({
+        x: Math.random() * (canvas.width - radius * 2) + radius,
+        y: -radius - 10,
+        radius,
+        speed: Math.random() * 2.5 + 2 + Math.min(score / 500, 4),
+        angle: 0,
+        rotSpeed: (Math.random() - 0.5) * 0.06,
+        vertices: 7 + Math.floor(Math.random() * 3)
+      });
+    }
+
+    function spawnPowerup() {
+      powerups.push({
+        x: Math.random() * (canvas.width - 40) + 20,
+        y: -20,
+        radius: 10,
+        speed: 2,
+        pulse: 0
+      });
+    }
+
+    function resetGame() {
+      score = 0;
+      shields = 3;
+      ship.x = 200;
+      ship.tilt = 0;
+      asteroids = [];
+      powerups = [];
+      particles = [];
+      spawnTimer = 0;
+      scoreEl.textContent = '0';
+      updateShieldDisplay();
+    }
+
+    function gameLoop() {
+      if (!isPlaying) return;
+
+      ctx.fillStyle = '#030611';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Stars
+      for (let star of stars) {
+        star.y += star.speed;
+        if (star.y > canvas.height) { star.y = 0; star.x = Math.random() * canvas.width; }
+        ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha})`;
+        ctx.fillRect(star.x, star.y, star.size, star.size);
+      }
+
+      // Ship movement
+      if (keys.left && ship.x > ship.width / 2 + 6) {
+        ship.x -= ship.speed;
+        ship.tilt = Math.max(ship.tilt - 0.1, -0.4);
+      } else if (keys.right && ship.x < canvas.width - ship.width / 2 - 6) {
+        ship.x += ship.speed;
+        ship.tilt = Math.min(ship.tilt + 0.1, 0.4);
+      } else {
+        ship.tilt *= 0.8;
+      }
+
+      // Draw Ship
+      ctx.save();
+      ctx.translate(ship.x, ship.y);
+      ctx.rotate(ship.tilt);
+
+      // Engine Thruster flame
+      const flameHeight = Math.random() * 12 + 10;
+      ctx.beginPath();
+      ctx.moveTo(-6, ship.height / 2);
+      ctx.lineTo(0, ship.height / 2 + flameHeight);
+      ctx.lineTo(6, ship.height / 2);
+      ctx.fillStyle = '#38bdf8';
+      ctx.shadowColor = '#0284c7';
+      ctx.shadowBlur = 12;
+      ctx.fill();
+
+      // Ship hull
+      ctx.beginPath();
+      ctx.moveTo(0, -ship.height / 2);
+      ctx.lineTo(ship.width / 2, ship.height / 2);
+      ctx.lineTo(0, ship.height / 3);
+      ctx.lineTo(-ship.width / 2, ship.height / 2);
+      ctx.closePath();
+      ctx.fillStyle = '#1e3a8a';
+      ctx.strokeStyle = '#60a5fa';
+      ctx.lineWidth = 2;
+      ctx.shadowColor = '#3b82f6';
+      ctx.shadowBlur = 10;
+      ctx.fill();
+      ctx.stroke();
+
+      // Cockpit
+      ctx.beginPath();
+      ctx.arc(0, -4, 4, 0, Math.PI * 2);
+      ctx.fillStyle = '#93c5fd';
+      ctx.fill();
+
+      ctx.restore();
+
+      // Spawning
+      spawnTimer++;
+      if (spawnTimer % Math.max(25, 60 - Math.floor(score / 150)) === 0) {
+        spawnAsteroid();
+      }
+      if (spawnTimer % 450 === 0 && shields < 3) {
+        spawnPowerup();
+      }
+
+      // Update Powerups
+      for (let i = powerups.length - 1; i >= 0; i--) {
+        const p = powerups[i];
+        p.y += p.speed;
+        p.pulse += 0.08;
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius + Math.sin(p.pulse) * 2, 0, Math.PI * 2);
+        ctx.fillStyle = '#38bdf8';
+        ctx.shadowColor = '#38bdf8';
+        ctx.shadowBlur = 14;
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.font = '10px monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('♥', p.x, p.y);
+        ctx.restore();
+
+        const dist = Math.hypot(p.x - ship.x, p.y - ship.y);
+        if (dist < p.radius + ship.width / 2) {
+          shields = Math.min(3, shields + 1);
+          updateShieldDisplay();
+          createExplosion(p.x, p.y, '#38bdf8', 12);
+          powerups.splice(i, 1);
+          continue;
+        }
+        if (p.y > canvas.height + 30) powerups.splice(i, 1);
+      }
+
+      // Update Asteroids
+      for (let i = asteroids.length - 1; i >= 0; i--) {
+        const a = asteroids[i];
+        a.y += a.speed;
+        a.angle += a.rotSpeed;
+
+        ctx.save();
+        ctx.translate(a.x, a.y);
+        ctx.rotate(a.angle);
+        ctx.beginPath();
+        for (let j = 0; j < a.vertices; j++) {
+          const ang = (j / a.vertices) * Math.PI * 2;
+          const r = a.radius * (0.8 + ((j % 2) * 0.3));
+          const px = Math.cos(ang) * r;
+          const py = Math.sin(ang) * r;
+          if (j === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+        ctx.closePath();
+        ctx.fillStyle = '#1e293b';
+        ctx.strokeStyle = '#ef4444';
+        ctx.lineWidth = 1.5;
+        ctx.shadowColor = '#ef4444';
+        ctx.shadowBlur = 8;
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+
+        // Collision Check
+        const dist = Math.hypot(a.x - ship.x, a.y - ship.y);
+        if (dist < a.radius + ship.width / 2.5) {
+          createExplosion(a.x, a.y, '#ef4444', 20);
+          asteroids.splice(i, 1);
+          shields--;
+          updateShieldDisplay();
+
+          if (shields <= 0) {
+            endGame();
+            return;
+          }
+          continue;
+        }
+
+        // Passed safely
+        if (a.y > canvas.height + a.radius) {
+          asteroids.splice(i, 1);
+          score += 15;
+          scoreEl.textContent = score;
+        }
+      }
+
+      // Update Particles
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const pt = particles[i];
+        pt.x += pt.vx;
+        pt.y += pt.vy;
+        pt.alpha -= pt.decay;
+
+        if (pt.alpha <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, pt.radius, 0, Math.PI * 2);
+        ctx.fillStyle = pt.color;
+        ctx.globalAlpha = pt.alpha;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+
+      score += 0.2;
+      scoreEl.textContent = Math.floor(score);
+
+      animationId = requestAnimationFrame(gameLoop);
+    }
+
+    function startGame() {
+      resetGame();
+      isPlaying = true;
+      startOverlay.classList.add('hidden');
+      gameOverOverlay.classList.add('hidden');
+      animationId = requestAnimationFrame(gameLoop);
+    }
+
+    function endGame() {
+      isPlaying = false;
+      cancelAnimationFrame(animationId);
+      finalScoreEl.textContent = Math.floor(score);
+      if (Math.floor(score) > bestScore) {
+        bestScore = Math.floor(score);
+        localStorage.setItem('space_best', bestScore);
+        bestScoreEl.textContent = bestScore;
+      }
+      gameOverOverlay.classList.remove('hidden');
+    }
+
+    // Keyboard controls
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = true;
+      if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = true;
+    });
+
+    window.addEventListener('keyup', (e) => {
+      if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = false;
+      if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = false;
+    });
+
+    // Touch / Buttons
+    const leftBtn = document.getElementById('leftBtn');
+    const rightBtn = document.getElementById('rightBtn');
+
+    leftBtn.addEventListener('mousedown', () => keys.left = true);
+    leftBtn.addEventListener('mouseup', () => keys.left = false);
+    leftBtn.addEventListener('touchstart', (e) => { e.preventDefault(); keys.left = true; });
+    leftBtn.addEventListener('touchend', (e) => { e.preventDefault(); keys.left = false; });
+
+    rightBtn.addEventListener('mousedown', () => keys.right = true);
+    rightBtn.addEventListener('mouseup', () => keys.right = false);
+    rightBtn.addEventListener('touchstart', (e) => { e.preventDefault(); keys.right = true; });
+    rightBtn.addEventListener('touchend', (e) => { e.preventDefault(); keys.right = false; });
+
+    // Mouse / Touch drag on canvas
+    canvas.addEventListener('mousemove', (e) => {
+      if (!isPlaying) return;
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
+      ship.x = Math.max(ship.width, Math.min(canvas.width - ship.width, mouseX));
+    });
+
+    canvas.addEventListener('touchmove', (e) => {
+      if (!isPlaying) return;
+      const rect = canvas.getBoundingClientRect();
+      const touchX = (e.touches[0].clientX - rect.left) * (canvas.width / rect.width);
+      ship.x = Math.max(ship.width, Math.min(canvas.width - ship.width, touchX));
+    });
+
+    startBtn.addEventListener('click', startGame);
+    restartBtn.addEventListener('click', startGame);
+  </script>
+</body>
+</html>

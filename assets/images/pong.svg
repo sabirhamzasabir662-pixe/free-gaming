@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg-pong" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a1420" />
+      <stop offset="50%" stop-color="#060c14" />
+      <stop offset="100%" stop-color="#020408" />
+    </linearGradient>
+    <filter id="glow-blue" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+    </filter>
+  </defs>
+  <rect width="640" height="360" fill="url(#bg-pong)" />
+  <!-- Center dividing line -->
+  <line x1="320" y1="20" x2="320" y2="340" stroke="rgba(56, 189, 248, 0.25)" stroke-width="4" stroke-dasharray="14, 14" />
+  <!-- Left Paddle -->
+  <rect x="70" y="110" width="16" height="85" rx="8" fill="#38bdf8" filter="url(#glow-blue)" />
+  <!-- Right Paddle -->
+  <rect x="554" y="160" width="16" height="85" rx="8" fill="#f43f5e" filter="drop-shadow(0 0 8px #f43f5e)" />
+  <!-- Ball Trail -->
+  <circle cx="270" cy="180" r="6" fill="#38bdf8" opacity="0.3" />
+  <circle cx="330" cy="190" r="8" fill="#38bdf8" opacity="0.5" />
+  <circle cx="390" cy="200" r="10" fill="#38bdf8" opacity="0.8" />
+  <!-- Glowing Ball -->
+  <circle cx="450" cy="210" r="13" fill="#ffffff" filter="drop-shadow(0 0 12px #38bdf8)" />
+  <!-- Score -->
+  <text x="260" y="80" fill="rgba(56, 189, 248, 0.7)" font-family="'Courier New', monospace" font-size="44" font-weight="bold" text-anchor="middle">5</text>
+  <text x="380" y="80" fill="rgba(244, 63, 94, 0.7)" font-family="'Courier New', monospace" font-size="44" font-weight="bold" text-anchor="middle">3</text>
+  <!-- HUD -->
+  <text x="30" y="40" fill="#38bdf8" font-family="'Courier New', monospace" font-size="13" font-weight="bold" letter-spacing="2">NEON_PONG // PRO CIRCUIT</text>
+</svg>

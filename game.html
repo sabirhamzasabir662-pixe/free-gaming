@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Play this free browser game on Free Gaming. No downloads required.">
+  <meta name="author" content="Hinzy">
+  <meta name="robots" content="index, follow">
+
+  <title>Play Game – Free Gaming</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="assets/images/logo.svg" type="image/svg+xml">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ======== NAVBAR ======== -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo" aria-label="Free Gaming Home">
+        <img src="assets/images/logo.svg" alt="Free Gaming logo" width="36" height="36">
+        <span class="logo-text">FreeGaming</span>
+      </a>
+
+      <div class="nav-links" id="navLinks">
+        <a href="index.html">Home</a>
+        <a href="index.html#games-section">Games</a>
+        <a href="index.html#categories">Categories</a>
+      </div>
+
+      <div class="search-wrapper" style="visibility: hidden;">
+        <input type="search" class="search-bar" disabled>
+      </div>
+
+      <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    </div>
+  </nav>
+
+  <!-- ======== GAME PAGE CONTENT ======== -->
+  <div class="game-page-wrapper">
+    <a href="index.html" class="game-back-link">← Back to all games</a>
+
+    <!-- Game Frame -->
+    <div class="game-frame-container">
+      <iframe id="gameIframe" title="Game" allowfullscreen sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
+      <button class="fullscreen-btn" id="fullscreenBtn" title="Fullscreen" aria-label="Toggle fullscreen">⛶</button>
+    </div>
+
+    <!-- Game Info -->
+    <div class="game-meta">
+      <div class="game-meta-left">
+        <h1 id="gameTitle">Loading...</h1>
+        <p class="dev-line" id="gameDev"></p>
+        <div class="card-tags" id="gameTags" style="margin-bottom: 14px;"></div>
+        <p class="desc" id="gameDesc"></p>
+      </div>
+
+      <div class="game-meta-right">
+        <h3>Game Details</h3>
+        <div class="meta-row">
+          <span class="meta-label">Rating</span>
+          <span class="meta-value" id="gameRating">—</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label">Mode</span>
+          <span class="meta-value" id="gameMode">—</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label">Difficulty</span>
+          <span class="meta-value" id="gameDiff">—</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label">Play Time</span>
+          <span class="meta-value" id="gameTime">—</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls-box">
+      <h3>🎮 Controls</h3>
+      <p id="gameControls">Loading control information...</p>
+    </div>
+  </div>
+
+  <!-- ======== FOOTER ======== -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo">
+          <img src="assets/images/logo.svg" alt="Free Gaming logo" width="36" height="36">
+          <span class="logo-text">FreeGaming</span>
+        </a>
+        <p>Your destination for free, no-download browser games.<br>A KGC (Khan Group of Companies) platform.</p>
+        <div class="kgc-badge">
+          <img src="assets/images/kgc-logo.png" alt="Khan Group of Companies (KGC)" height="36" style="border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.4);">
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Browse</h4>
+        <a href="index.html?category=All#games-section">All Games</a>
+        <a href="index.html#categories">Categories</a>
+        <a href="index.html?sort=toprated#games-section">Top Rated</a>
+        <a href="index.html?sort=newest#games-section">Newest</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Categories</h4>
+        <a href="index.html?category=Action#games-section">Action</a>
+        <a href="index.html?category=Arcade#games-section">Arcade</a>
+        <a href="index.html?category=Puzzle#games-section">Puzzle</a>
+        <a href="index.html?category=Strategy#games-section">Strategy</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>About</h4>
+        <a href="about.html">About Us</a>
+        <a href="contact.html">Contact</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Use</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© 2026 Khan Group of Companies (KGC). Owner: Hinzy. All rights reserved.</span>
+      <span>Powered by KGC</span>
+    </div>
+  </footer>
+
+  <!-- Main Script -->
+  <script src="js/main.js"></script>
+</body>
+</html>

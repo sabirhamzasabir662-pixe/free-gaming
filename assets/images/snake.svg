@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg-snake" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a1912" />
+      <stop offset="50%" stop-color="#05140b" />
+      <stop offset="100%" stop-color="#020804" />
+    </linearGradient>
+    <linearGradient id="snake-body" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00ff88" />
+      <stop offset="100%" stop-color="#00a854" />
+    </linearGradient>
+    <radialGradient id="food-glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ff3366" stop-opacity="1" />
+      <stop offset="60%" stop-color="#ff0044" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#ff0044" stop-opacity="0" />
+    </radialGradient>
+    <filter id="neon-glow-green" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <pattern id="snake-grid" width="30" height="30" patternUnits="userSpaceOnUse">
+      <path d="M 30 0 L 0 0 0 30" fill="none" stroke="rgba(0, 255, 136, 0.07)" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="640" height="360" fill="url(#bg-snake)" />
+  <rect width="640" height="360" fill="url(#snake-grid)" />
+
+  <!-- Ambient light -->
+  <circle cx="480" cy="180" r="140" fill="#ff0055" opacity="0.12" filter="blur(40px)" />
+  <circle cx="200" cy="180" r="150" fill="#00ff88" opacity="0.15" filter="blur(45px)" />
+
+  <!-- Snake Body Segments -->
+  <g filter="url(#neon-glow-green)">
+    <!-- Trail / Tail -->
+    <rect x="80" y="240" width="36" height="36" rx="8" fill="#00a854" opacity="0.7"/>
+    <rect x="120" y="240" width="36" height="36" rx="8" fill="#00b85c" opacity="0.8"/>
+    <rect x="160" y="240" width="36" height="36" rx="8" fill="#00c865"/>
+    <rect x="200" y="240" width="36" height="36" rx="8" fill="#00d86e"/>
+    
+    <!-- Turn Up -->
+    <rect x="200" y="200" width="36" height="36" rx="8" fill="#00e575"/>
+    <rect x="200" y="160" width="36" height="36" rx="8" fill="#00f07c"/>
+    <rect x="200" y="120" width="36" height="36" rx="8" fill="#00f882"/>
+
+    <!-- Turn Right -->
+    <rect x="240" y="120" width="36" height="36" rx="8" fill="#00ff88"/>
+    <rect x="280" y="120" width="36" height="36" rx="8" fill="#00ff88"/>
+    <rect x="320" y="120" width="36" height="36" rx="8" fill="#00ff88"/>
+    <rect x="360" y="120" width="36" height="36" rx="8" fill="#14ff94"/>
+    
+    <!-- Snake Head -->
+    <rect x="400" y="120" width="40" height="36" rx="10" fill="#38ffaa"/>
+    <!-- Eyes -->
+    <circle cx="426" cy="130" r="4" fill="#05140b"/>
+    <circle cx="426" cy="146" r="4" fill="#05140b"/>
+    <circle cx="427" cy="129" r="1.5" fill="#ffffff"/>
+    <circle cx="427" cy="145" r="1.5" fill="#ffffff"/>
+    
+    <!-- Tongue -->
+    <path d="M 440 138 L 454 138 L 460 132 M 454 138 L 460 144" stroke="#ff0055" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  </g>
+
+  <!-- Glowing Food (Cyber Apple / Core) -->
+  <circle cx="500" cy="138" r="30" fill="url(#food-glow)" />
+  <circle cx="500" cy="138" r="14" fill="#ff2a6d" filter="drop-shadow(0 0 10px #ff2a6d)" />
+  <circle cx="496" cy="134" r="4" fill="#ffffff" opacity="0.8"/>
+  <!-- Food leaf/sparkle -->
+  <path d="M 500 124 Q 508 116 514 120" stroke="#00ff88" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+  <!-- High-tech HUD overlay elements -->
+  <text x="30" y="45" fill="#00ff88" font-family="'Courier New', monospace" font-size="13" font-weight="bold" letter-spacing="2">CYBER_SNAKE // PROTOCOL_01</text>
+  <text x="540" y="45" fill="rgba(255,255,255,0.4)" font-family="'Courier New', monospace" font-size="12" letter-spacing="1">SCORE: 2,480</text>
+  <path d="M 30 55 L 610 55" stroke="rgba(0, 255, 136, 0.2)" stroke-width="1"/>
+  <rect x="520" y="290" width="90" height="28" rx="6" fill="rgba(0,255,136,0.1)" stroke="rgba(0,255,136,0.4)" stroke-width="1"/>
+  <text x="565" y="308" fill="#00ff88" font-family="sans-serif" font-size="11" font-weight="bold" text-anchor="middle">SPEED: 1.5X</text>
+</svg>

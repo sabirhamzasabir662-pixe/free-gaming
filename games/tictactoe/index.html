@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Neon Tic-Tac-Toe</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+    body {
+      background: #090614;
+      color: #e2e8f0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+      padding: 16px;
+    }
+    .wrapper {
+      width: 100%;
+      max-width: 440px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+    /* Controls Header */
+    .header-bar {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(26, 16, 48, 0.7);
+      border: 1px solid rgba(192, 132, 252, 0.25);
+      border-radius: 12px;
+      padding: 8px 14px;
+    }
+    .mode-select {
+      background: #1e1136;
+      border: 1px solid rgba(192, 132, 252, 0.4);
+      color: #c084fc;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      outline: none;
+    }
+    .btn-sound {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #94a3b8;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+    .btn-sound:hover {
+      border-color: #c084fc;
+      color: #c084fc;
+    }
+    /* Score Board */
+    .score-board {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .score-card {
+      background: rgba(20, 11, 38, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .score-card.active-x {
+      border-color: #c084fc;
+      box-shadow: 0 0 15px rgba(192, 132, 252, 0.3);
+    }
+    .score-card.active-o {
+      border-color: #22d3ee;
+      box-shadow: 0 0 15px rgba(34, 211, 238, 0.3);
+    }
+    .score-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #94a3b8;
+      display: block;
+      margin-bottom: 4px;
+    }
+    .score-val {
+      font-size: 20px;
+      font-weight: 800;
+      font-family: monospace;
+    }
+    .score-x { color: #c084fc; }
+    .score-ties { color: #cbd5e1; }
+    .score-o { color: #22d3ee; }
+
+    /* Turn indicator */
+    .turn-status {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: #c084fc;
+      text-shadow: 0 0 8px rgba(192, 132, 252, 0.5);
+      height: 20px;
+    }
+
+    /* 3x3 Game Board */
+    .board-container {
+      position: relative;
+      background: #110724;
+      border: 2px solid rgba(192, 132, 252, 0.3);
+      border-radius: 16px;
+      padding: 12px;
+      box-shadow: 0 0 30px rgba(168, 85, 247, 0.15), 0 15px 35px rgba(0, 0, 0, 0.6);
+      width: 100%;
+      aspect-ratio: 1;
+      max-width: 380px;
+    }
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 10px;
+      width: 100%;
+      height: 100%;
+    }
+    .cell {
+      background: #1b0d36;
+      border: 1px solid rgba(192, 132, 252, 0.2);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 52px;
+      font-weight: 900;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+    }
+    .cell:hover:not(.taken) {
+      background: #281350;
+      border-color: rgba(192, 132, 252, 0.6);
+      transform: scale(1.03);
+    }
+    .cell.taken {
+      cursor: default;
+    }
+    .cell.x {
+      color: #c084fc;
+      text-shadow: 0 0 18px rgba(192, 132, 252, 0.8);
+      animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .cell.o {
+      color: #22d3ee;
+      text-shadow: 0 0 18px rgba(34, 211, 238, 0.8);
+      animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .cell.win {
+      background: #3b1464;
+      border-color: #f43f5e;
+      box-shadow: 0 0 25px rgba(244, 63, 94, 0.6);
+      animation: pulseWin 0.6s infinite alternate;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.3); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes pulseWin {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.06); }
+    }
+
+    /* Footer Action */
+    .btn-reset {
+      background: linear-gradient(135deg, #a855f7, #6366f1);
+      color: #ffffff;
+      font-weight: 700;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 24px;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+      transition: all 0.2s;
+    }
+    .btn-reset:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 22px rgba(168, 85, 247, 0.6);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="wrapper">
+    <div class="header-bar">
+      <select class="mode-select" id="modeSelect">
+        <option value="ai-smart">VS AI (Smart)</option>
+        <option value="ai-easy">VS AI (Casual)</option>
+        <option value="pvp">2-Player (Local)</option>
+      </select>
+      <button class="btn-sound" id="btnSound">🔊 Sound</button>
+    </div>
+
+    <div class="score-board">
+      <div class="score-card active-x" id="cardX">
+        <span class="score-label" id="labelX">Player X</span>
+        <span class="score-val score-x" id="scoreX">0</span>
+      </div>
+      <div class="score-card" id="cardTies">
+        <span class="score-label">Ties</span>
+        <span class="score-val score-ties" id="scoreTies">0</span>
+      </div>
+      <div class="score-card" id="cardO">
+        <span class="score-label" id="labelO">AI (O)</span>
+        <span class="score-val score-o" id="scoreO">0</span>
+      </div>
+    </div>
+
+    <div class="turn-status" id="turnStatus">Player X's Turn</div>
+
+    <div class="board-container">
+      <div class="board" id="board">
+        <div class="cell" data-index="0"></div>
+        <div class="cell" data-index="1"></div>
+        <div class="cell" data-index="2"></div>
+        <div class="cell" data-index="3"></div>
+        <div class="cell" data-index="4"></div>
+        <div class="cell" data-index="5"></div>
+        <div class="cell" data-index="6"></div>
+        <div class="cell" data-index="7"></div>
+        <div class="cell" data-index="8"></div>
+      </div>
+    </div>
+
+    <button class="btn-reset" id="btnReset">RESET ROUND</button>
+  </div>
+
+  <script>
+    // Audio synthesizer
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    let soundEnabled = true;
+
+    function playTone(freq, duration, type = 'sine') {
+      if (!soundEnabled || !audioCtx) return;
+      try {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    const playXSound = () => playTone(523.25, 0.1, 'triangle'); // C5
+    const playOSound = () => playTone(659.25, 0.1, 'sine'); // E5
+    const playWinSound = () => {
+      playTone(523.25, 0.15, 'triangle');
+      setTimeout(() => playTone(659.25, 0.15, 'triangle'), 100);
+      setTimeout(() => playTone(783.99, 0.3, 'triangle'), 200);
+    };
+    const playTieSound = () => playTone(220, 0.3, 'sawtooth');
+
+    document.getElementById('btnSound').addEventListener('click', (e) => {
+      soundEnabled = !soundEnabled;
+      e.target.textContent = soundEnabled ? '🔊 Sound' : '🔇 Muted';
+    });
+
+    // Game State
+    let board = Array(9).fill('');
+    let currentPlayer = 'X';
+    let isGameOver = false;
+    let scores = { X: 0, O: 0, ties: 0 };
+
+    const winPatterns = [
+      [0,1,2], [3,4,5], [6,7,8], // rows
+      [0,3,6], [1,4,7], [2,5,8], // cols
+      [0,4,8], [2,4,6]           // diags
+    ];
+
+    const cells = document.querySelectorAll('.cell');
+    const turnStatus = document.getElementById('turnStatus');
+    const modeSelect = document.getElementById('modeSelect');
+    const labelO = document.getElementById('labelO');
+    const cardX = document.getElementById('cardX');
+    const cardO = document.getElementById('cardO');
+
+    modeSelect.addEventListener('change', () => {
+      const mode = modeSelect.value;
+      labelO.textContent = mode === 'pvp' ? 'Player O' : 'AI (O)';
+      resetBoard();
+    });
+
+    function updateActiveCards() {
+      if (isGameOver) {
+        cardX.classList.remove('active-x');
+        cardO.classList.remove('active-o');
+        return;
+      }
+      if (currentPlayer === 'X') {
+        cardX.classList.add('active-x');
+        cardO.classList.remove('active-o');
+      } else {
+        cardO.classList.add('active-o');
+        cardX.classList.remove('active-x');
+      }
+    }
+
+    function checkWin(b, player) {
+      return winPatterns.find(pattern => 
+        pattern.every(index => b[index] === player)
+      );
+    }
+
+    function isBoardFull(b) {
+      return b.every(cell => cell !== '');
+    }
+
+    function handleCellClick(e) {
+      const index = parseInt(e.target.dataset.index, 10);
+      if (board[index] !== '' || isGameOver) return;
+      if (modeSelect.value !== 'pvp' && currentPlayer === 'O') return; // AI is thinking
+
+      makeMove(index, currentPlayer);
+
+      if (!isGameOver && modeSelect.value !== 'pvp' && currentPlayer === 'O') {
+        turnStatus.textContent = 'AI is calculating...';
+        setTimeout(makeAIMove, 300);
+      }
+    }
+
+    function makeMove(index, player) {
+      board[index] = player;
+      const cell = cells[index];
+      cell.textContent = player;
+      cell.classList.add('taken', player.toLowerCase());
+
+      if (player === 'X') playXSound();
+      else playOSound();
+
+      const winLine = checkWin(board, player);
+      if (winLine) {
+        isGameOver = true;
+        winLine.forEach(i => cells[i].classList.add('win'));
+        scores[player]++;
+        document.getElementById(`score${player}`).textContent = scores[player];
+        turnStatus.textContent = `${player === 'X' ? 'Player X' : (modeSelect.value === 'pvp' ? 'Player O' : 'AI')} Wins! 🎉`;
+        playWinSound();
+        updateActiveCards();
+        return;
+      }
+
+      if (isBoardFull(board)) {
+        isGameOver = true;
+        scores.ties++;
+        document.getElementById('scoreTies').textContent = scores.ties;
+        turnStatus.textContent = "It's a Stalemate Draw!";
+        playTieSound();
+        updateActiveCards();
+        return;
+      }
+
+      currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+      const isAI = modeSelect.value !== 'pvp' && currentPlayer === 'O';
+      turnStatus.textContent = isAI ? "AI's Turn" : `Player ${currentPlayer}'s Turn`;
+      updateActiveCards();
+    }
+
+    // Minimax & Heuristic AI
+    function makeAIMove() {
+      if (isGameOver) return;
+      const mode = modeSelect.value;
+      const availableMoves = board.map((val, idx) => val === '' ? idx : null).filter(val => val !== null);
+
+      if (availableMoves.length === 0) return;
+
+      let move;
+      if (mode === 'ai-easy') {
+        // Casual: 50% random, 50% smart
+        if (Math.random() > 0.5) {
+          move = availableMoves[Math.floor(Math.random() * availableMoves.length)];
+        } else {
+          move = getBestMove();
+        }
+      } else {
+        // Smart (Minimax with high depth)
+        move = getBestMove();
+      }
+
+      makeMove(move, 'O');
+    }
+
+    function getBestMove() {
+      // 1. Win if possible
+      for (let i of [0,1,2,3,4,5,6,7,8]) {
+        if (board[i] === '') {
+          board[i] = 'O';
+          if (checkWin(board, 'O')) {
+            board[i] = '';
+            return i;
+          }
+          board[i] = '';
+        }
+      }
+
+      // 2. Block opponent's immediate win
+      for (let i of [0,1,2,3,4,5,6,7,8]) {
+        if (board[i] === '') {
+          board[i] = 'X';
+          if (checkWin(board, 'X')) {
+            board[i] = '';
+            return i;
+          }
+          board[i] = '';
+        }
+      }
+
+      // 3. Take center
+      if (board[4] === '') return 4;
+
+      // 4. Take corners
+      const corners = [0, 2, 6, 8].filter(i => board[i] === '');
+      if (corners.length > 0) {
+        return corners[Math.floor(Math.random() * corners.length)];
+      }
+
+      // 5. Take sides
+      const sides = [1, 3, 5, 7].filter(i => board[i] === '');
+      return sides[Math.floor(Math.random() * sides.length)];
+    }
+
+    function resetBoard() {
+      board = Array(9).fill('');
+      currentPlayer = 'X';
+      isGameOver = false;
+      cells.forEach(cell => {
+        cell.textContent = '';
+        cell.className = 'cell';
+      });
+      turnStatus.textContent = "Player X's Turn";
+      updateActiveCards();
+    }
+
+    cells.forEach(cell => cell.addEventListener('click', handleCellClick));
+    document.getElementById('btnReset').addEventListener('click', resetBoard);
+
+    updateActiveCards();
+  </script>
+</body>
+</html>

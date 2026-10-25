@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Neural Memory Matrix</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+    body {
+      background: #0d0417;
+      color: #f1f5f9;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 16px;
+    }
+    .wrapper {
+      width: 100%;
+      max-width: 440px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+    .hud {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(30, 10, 50, 0.7);
+      border: 1px solid rgba(236, 72, 153, 0.3);
+      border-radius: 12px;
+      padding: 8px 16px;
+    }
+    .hud-item {
+      font-size: 13px;
+      font-weight: 700;
+      color: #ec4899;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      width: 100%;
+    }
+    .card {
+      aspect-ratio: 1;
+      background: #1e0f38;
+      border: 1px solid rgba(236, 72, 153, 0.3);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      cursor: pointer;
+      transform-style: preserve-3d;
+      transition: transform 0.3s, background 0.2s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+    .card:hover {
+      border-color: #ec4899;
+      transform: translateY(-2px);
+    }
+    .card.flipped, .card.matched {
+      background: #3b1259;
+      border-color: #f472b6;
+      box-shadow: 0 0 15px rgba(236, 72, 153, 0.5);
+    }
+    .card.matched {
+      background: #4c1d68;
+      border-color: #10b981;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+      cursor: default;
+    }
+    .btn-reset {
+      background: linear-gradient(135deg, #ec4899, #8b5cf6);
+      color: #fff;
+      font-weight: 700;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 13px;
+      box-shadow: 0 0 15px rgba(236, 72, 153, 0.4);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="hud">
+      <div class="hud-item" id="movesEl">Moves: 0</div>
+      <div class="hud-item" id="pairsEl">Pairs: 0 / 8</div>
+      <div class="hud-item" id="timerEl">Time: 0s</div>
+    </div>
+    <div class="grid" id="grid"></div>
+    <button class="btn-reset" id="btnRestart">RESTART MATRIX</button>
+  </div>
+
+  <script>
+    const symbols = ['⚡', '💎', '🚀', '🔮', '👾', '🔥', '🎮', '🪐'];
+    let cards = [...symbols, ...symbols];
+    let flippedCards = [];
+    let matchedCount = 0;
+    let moves = 0;
+    let timer = 0;
+    let timerInterval = null;
+
+    const grid = document.getElementById('grid');
+    const movesEl = document.getElementById('movesEl');
+    const pairsEl = document.getElementById('pairsEl');
+    const timerEl = document.getElementById('timerEl');
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function initGame() {
+      grid.innerHTML = '';
+      flippedCards = [];
+      matchedCount = 0;
+      moves = 0;
+      timer = 0;
+      clearInterval(timerInterval);
+      movesEl.textContent = 'Moves: 0';
+      pairsEl.textContent = 'Pairs: 0 / 8';
+      timerEl.textContent = 'Time: 0s';
+
+      timerInterval = setInterval(() => {
+        timer++;
+        timerEl.textContent = `Time: ${timer}s`;
+      }, 1000);
+
+      const shuffled = shuffle([...cards]);
+      shuffled.forEach((sym, index) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.dataset.symbol = sym;
+        card.dataset.index = index;
+        card.textContent = '❓';
+        card.addEventListener('click', () => handleCardClick(card));
+        grid.appendChild(card);
+      });
+    }
+
+    function handleCardClick(card) {
+      if (card.classList.contains('flipped') || card.classList.contains('matched') || flippedCards.length >= 2) return;
+
+      card.classList.add('flipped');
+      card.textContent = card.dataset.symbol;
+      flippedCards.push(card);
+
+      if (flippedCards.length === 2) {
+        moves++;
+        movesEl.textContent = `Moves: ${moves}`;
+        const [c1, c2] = flippedCards;
+
+        if (c1.dataset.symbol === c2.dataset.symbol) {
+          c1.classList.add('matched');
+          c2.classList.add('matched');
+          flippedCards = [];
+          matchedCount++;
+          pairsEl.textContent = `Pairs: ${matchedCount} / 8`;
+          if (matchedCount === 8) {
+            clearInterval(timerInterval);
+            setTimeout(() => alert(`🎉 Mission Complete in ${moves} moves and ${timer} seconds!`), 200);
+          }
+        } else {
+          setTimeout(() => {
+            c1.classList.remove('flipped');
+            c2.classList.remove('flipped');
+            c1.textContent = '❓';
+            c2.textContent = '❓';
+            flippedCards = [];
+          }, 800);
+        }
+      }
+    }
+
+    document.getElementById('btnRestart').addEventListener('click', initGame);
+    initGame();
+  </script>
+</body>
+</html>

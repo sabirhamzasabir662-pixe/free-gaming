@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="100%" height="100%">
+  <defs>
+    <linearGradient id="sky-run" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0f051d" />
+      <stop offset="45%" stop-color="#240b3b" />
+      <stop offset="65%" stop-color="#6b114d" />
+      <stop offset="70%" stop-color="#f43f5e" />
+      <stop offset="72%" stop-color="#110524" />
+      <stop offset="100%" stop-color="#05010a" />
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" fill="url(#sky-run)" />
+  <!-- Synthwave Sun -->
+  <circle cx="320" cy="220" r="60" fill="#facc15" filter="drop-shadow(0 0 25px #f43f5e)" />
+  <line x1="260" y1="210" x2="380" y2="210" stroke="#110524" stroke-width="4" />
+  <line x1="265" y1="225" x2="375" y2="225" stroke="#110524" stroke-width="6" />
+  <line x1="275" y1="240" x2="365" y2="240" stroke="#110524" stroke-width="8" />
+
+  <!-- Perspective 3D Grid Highway -->
+  <g stroke="#a855f7" stroke-width="1.5" opacity="0.6">
+    <line x1="320" y1="250" x2="20" y2="360" />
+    <line x1="320" y1="250" x2="160" y2="360" />
+    <line x1="320" y1="250" x2="260" y2="360" />
+    <line x1="320" y1="250" x2="320" y2="360" stroke="#ec4899" stroke-width="2.5" />
+    <line x1="320" y1="250" x2="380" y2="360" />
+    <line x1="320" y1="250" x2="480" y2="360" />
+    <line x1="320" y1="250" x2="620" y2="360" />
+
+    <line x1="280" y1="260" x2="360" y2="260" />
+    <line x1="240" y1="275" x2="400" y2="275" />
+    <line x1="180" y1="298" x2="460" y2="298" />
+    <line x1="90" y1="330" x2="550" y2="330" />
+  </g>
+
+  <!-- Cyber Runner Car / Avatar -->
+  <g transform="translate(320, 310)">
+    <polygon points="-25,10 25,10 18,-15 -18,-15" fill="#06b6d4" stroke="#67e8f9" stroke-width="2" filter="drop-shadow(0 0 10px #06b6d4)" />
+    <!-- Taillights -->
+    <rect x="-20" y="6" width="10" height="4" rx="2" fill="#ef4444" filter="drop-shadow(0 0 6px #ef4444)"/>
+    <rect x="10" y="6" width="10" height="4" rx="2" fill="#ef4444" filter="drop-shadow(0 0 6px #ef4444)"/>
+  </g>
+
+  <text x="30" y="45" fill="#f43f5e" font-family="'Courier New', monospace" font-size="13" font-weight="bold" letter-spacing="2">SYNTH_RUNNER // 80S HIGHWAY</text>
+  <text x="510" y="45" fill="#facc15" font-family="'Courier New', monospace" font-size="12">SPEED: 180 MPH</text>
+  <path d="M 30 55 L 610 55" stroke="rgba(244, 63, 94, 0.2)" stroke-width="1"/>
+</svg>
